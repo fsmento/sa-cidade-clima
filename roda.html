@@ -7,7 +7,315 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/style.css">
+<style>
+/* Identidade visual do Seminário Avançado (a partir do .pptx original):
+   Roboto; azul-marinho #00357A no texto; faixa de título em degradê #005289 → #1E3768;
+   capa em degradê #09ADD7 → #005389; folha (Jaya99, Noun Project). */
+:root {
+  --azul: #00357A;
+  --azul-2: #005289;
+  --marinho: #1E3768;
+  --ciano: #09ADD7;
+  --folha: #005E96;
+  --cinza: #5f6b7a;
+  --linha: #d5dce6;
+  --fundo-claro: #f2f6fa;
+  --font: "Roboto", Arial, sans-serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; background: #0e1f36; overflow: hidden; }
+body { font-family: var(--font); color: var(--azul); -webkit-font-smoothing: antialiased; }
+
+.stage { position: absolute; left: 50%; top: 50%; width: 1600px; height: 900px; transform-origin: center; }
+.slide { position: absolute; inset: 0; background: #fff; opacity: 0; visibility: hidden; transition: opacity .3s ease;
+  display: grid; grid-template-rows: 96px 1fr auto; }
+.slide.active { opacity: 1; visibility: visible; }
+
+/* faixa de título */
+.hd { background: linear-gradient(90deg, var(--azul-2), var(--marinho)); color: #fff; display: flex; align-items: center; justify-content: space-between; padding: 0 64px; }
+.hd h2 { margin: 0; font: 700 38px/1 var(--font); letter-spacing: -.005em; }
+.hd .sec { font: 500 16px/1 var(--font); letter-spacing: .08em; text-transform: uppercase; color: #a9d8ef; }
+.bd { padding: 44px 64px 20px; min-height: 0; }
+.ft { padding: 0 64px 26px; font-size: 14px; line-height: 1.45; color: var(--cinza); display: flex; justify-content: space-between; gap: 40px; padding-right: 200px; }
+.ft b { color: var(--azul); }
+
+/* tipografia */
+.lead { font: 400 30px/1.4 var(--font); margin: 0 0 26px; }
+.lead strong { font-weight: 700; }
+p { margin: 0 0 16px; }
+.t-24 { font-size: 24px; line-height: 1.5; }
+.t-22 { font-size: 22px; line-height: 1.5; }
+.t-20 { font-size: 20px; line-height: 1.5; }
+.muted { color: var(--cinza); }
+.realce { background: var(--azul); color: #fff; padding: 0 6px; }
+.rotulo { display: inline-block; font: 700 14px/1 var(--font); letter-spacing: .1em; text-transform: uppercase; color: var(--ciano); margin-bottom: 12px; }
+blockquote { margin: 0; font: italic 400 25px/1.55 var(--font); color: var(--azul); padding-left: 28px; border-left: 3px solid var(--ciano); }
+.cols { display: grid; gap: 56px; height: 100%; }
+.c-5-7 { grid-template-columns: 5fr 7fr; }
+.c-1-1 { grid-template-columns: 1fr 1fr; }
+.c-4-8 { grid-template-columns: 4fr 8fr; }
+.vline { border-left: 2px solid var(--azul); padding-left: 44px; }
+
+/* capa */
+.capa { grid-template-rows: 1fr 150px; }
+.capa .topo { position: relative; overflow: hidden; background: linear-gradient(135deg, var(--ciano) 0%, #005389 52%, #005389 100%); color: #fff;
+  display: grid; grid-template-columns: 1fr 2px 1fr; gap: 56px; align-items: center; padding: 0 110px; }
+.capa .folha { position: absolute; left: -40px; top: 40px; width: 560px; opacity: .35; }
+.capa .folha path { fill: var(--folha); }
+.capa .esq { text-align: right; position: relative; }
+.capa .esq .parte { font: 400 28px/1 var(--font); margin-bottom: 26px; }
+.capa .esq p { font: 700 32px/1.3 var(--font); margin: 0; }
+.capa .sep { background: rgba(255,255,255,.75); height: 420px; }
+.capa h1 { font: 700 80px/1.02 var(--font); margin: 0 0 14px; letter-spacing: -.01em; }
+.capa .sub { font: 400 30px/1.2 var(--font); margin-bottom: 40px; }
+.capa .meta { font: 400 20px/1.7 var(--font); }
+.capa .logos { display: flex; align-items: center; justify-content: center; gap: 70px; background: #fff; }
+.capa .logos img { height: 70px; }
+.capa .credito { position: absolute; left: 14px; bottom: 10px; font-size: 11px; color: rgba(255,255,255,.7); }
+
+/* boas-vindas */
+.boas { font: 400 27px/1.55 var(--font); max-width: 1180px; }
+.boas p { margin-bottom: 22px; }
+.refs-op { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-top: 30px; }
+.card { background: var(--fundo-claro); padding: 26px 30px; }
+.card h4 { margin: 0 0 8px; font: 700 15px/1 var(--font); letter-spacing: .1em; text-transform: uppercase; color: var(--ciano); }
+.card p { margin: 0; font-size: 21px; line-height: 1.45; }
+
+/* programa */
+.prog { display: grid; grid-template-columns: 260px 2px 1fr; gap: 0 48px; align-items: stretch; max-width: 1100px; margin: 10px auto 0; }
+.prog .bar { background: var(--azul); grid-row: 1 / span 3; grid-column: 2; }
+.prog time { grid-column: 1; text-align: right; font: 400 26px/1.3 var(--font); padding: 28px 0; font-variant-numeric: tabular-nums; }
+.prog .it { grid-column: 3; padding: 28px 0; border-bottom: 2px solid var(--azul); font-size: 24px; line-height: 1.45; }
+.prog .it:last-of-type { border-bottom: 0; }
+.prog .it b { display: block; font-size: 26px; }
+.prox { max-width: 1100px; margin: 34px auto 0; background: var(--fundo-claro); padding: 22px 30px; font-size: 21px; line-height: 1.5; }
+.prox b { color: var(--azul-2); }
+
+/* mapeamento */
+.perguntas { list-style: none; margin: 0; padding: 0; counter-reset: q; }
+.perguntas li { counter-increment: q; display: grid; grid-template-columns: 48px 1fr; padding: 12px 0; font-size: 24px; line-height: 1.35; border-bottom: 1px solid var(--linha); }
+.perguntas li::before { content: counter(q); font-weight: 700; color: var(--ciano); }
+.ruas { display: grid; grid-template-rows: 1fr 1fr; gap: 16px; height: 640px; }
+.ruas figure { margin: 0; position: relative; min-height: 0; height: 100%; overflow: hidden; }
+.ruas img { width: 100%; height: 100%; object-fit: cover; border: 1px solid var(--linha); }
+.ruas figcaption { position: absolute; left: 0; bottom: 0; background: #fff; border: 1px solid var(--linha); padding: 4px 10px; font-size: 15px; }
+
+/* raciocínio relacional */
+.diag svg { width: 100%; height: auto; }
+.nota { background: var(--fundo-claro); padding: 22px 26px; font-size: 21px; line-height: 1.5; margin-top: 30px; }
+.confrontos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 36px; }
+.conf svg { width: 100%; height: 170px; display: block; margin-bottom: 20px; }
+.conf h4 { margin: 0 0 10px; font: 700 25px/1.25 var(--font); }
+.conf p { margin: 0; font-size: 20px; line-height: 1.5; color: var(--cinza); }
+.sintese { margin-top: 46px; padding: 26px 34px; background: linear-gradient(90deg, var(--azul-2), var(--marinho)); color: #fff; font: 400 28px/1.35 var(--font); }
+
+/* conceitos */
+.lista-conceitos { list-style: none; margin: 0; padding: 0; font-size: 26px; }
+.lista-conceitos > li { padding: 14px 0; }
+.lista-conceitos li.on { font-weight: 700; }
+.lista-conceitos ul { padding: 6px 0 0 28px; margin: 0; font-size: 23px; font-weight: 400; }
+.lista-conceitos ul li { padding: 4px 0; }
+.niveis { display: grid; gap: 22px; }
+.nivel { display: grid; grid-template-columns: 220px 1fr; gap: 30px; padding-bottom: 22px; border-bottom: 1px solid var(--linha); }
+.nivel:last-child { border-bottom: 0; }
+.nivel b { font: 700 28px/1.15 var(--font); }
+.nivel b small { display: block; font: 400 17px/1.35 var(--font); color: var(--cinza); margin-top: 8px; }
+.nivel p { margin: 0 0 8px; font-size: 22px; line-height: 1.45; }
+.nivel em { font-size: 17px; color: var(--ciano); font-style: normal; font-weight: 500; }
+
+/* método */
+.escalas { list-style: none; padding: 0; margin: 0 0 30px; }
+.escalas li { display: grid; grid-template-columns: 1fr auto; align-items: center; padding: 14px 0; border-bottom: 1px solid var(--linha); font-size: 25px; }
+.escalas li code { font: 700 24px var(--font); color: var(--azul-2); }
+.usos h4 { margin: 0 0 10px; font: 700 15px var(--font); letter-spacing: .1em; text-transform: uppercase; color: var(--ciano); }
+.usos ul { margin: 0; padding-left: 24px; font-size: 21px; line-height: 1.6; }
+.fig { margin: 0; height: 100%; display: flex; flex-direction: column; }
+.fig img { width: 100%; flex: 1; min-height: 0; object-fit: contain; }
+.fig figcaption { font-size: 14px; color: var(--cinza); margin-top: 8px; }
+.galeria { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; height: 100%; }
+.galeria img { width: 100%; height: 100%; object-fit: cover; }
+
+/* nota metodológica */
+.numeros { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; margin-bottom: 36px; }
+.numero b { display: block; font: 700 76px/1 var(--font); color: var(--azul-2); }
+.numero span { font-size: 20px; color: var(--cinza); }
+.grupos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+.grupo { padding: 20px 22px; background: var(--fundo-claro); display: grid; grid-template-columns: 54px 1fr; gap: 14px; align-items: start; }
+.grupo i { font-style: normal; width: 46px; height: 46px; border-radius: 50%; background: var(--c); color: #fff; display: grid; place-items: center; font: 700 22px var(--font); }
+.grupo b { font-size: 19px; line-height: 1.3; display: block; }
+.grupo small { font-size: 16px; color: var(--cinza); }
+
+/* roda */
+.roda-layout { display: grid; grid-template-columns: 690px 1fr; gap: 44px; align-items: center; height: 100%; }
+.roda-box { width: 690px; height: 690px; margin-top: -14px; }
+.roda-svg { width: 100%; height: 100%; overflow: visible; font-family: var(--font); }
+.roda-svg .seg-grp { fill: var(--c); }
+.roda-svg .seg-tec { fill: color-mix(in srgb, var(--c) 14%, white); transition: fill .15s; cursor: pointer; }
+.roda-svg .tec:hover .seg-tec, .roda-svg .tec:focus .seg-tec { fill: color-mix(in srgb, var(--c) 35%, white); outline: none; }
+.roda-svg .tec:focus { outline: none; }
+.roda-svg .tec.on .seg-tec { fill: var(--c); }
+.roda-svg .tec.on .t-tec { fill: #fff; font-weight: 700; }
+.roda-svg.tem-sel .grp:not(.on) .seg-grp { opacity: .45; }
+.roda-svg .t-tec { fill: #13294b; font-size: 13.5px; font-weight: 500; pointer-events: none; }
+.roda-svg .num-bg { fill: #fff; stroke: var(--c); stroke-width: 1.5; }
+.roda-svg .tec.on .num-bg { fill: var(--c); }
+.roda-svg .t-num { fill: #13294b; font-size: 11.5px; font-weight: 700; pointer-events: none; }
+.roda-svg .tec.on .t-num { fill: #fff; }
+.roda-svg .t-letra { fill: rgba(255,255,255,.9); font-size: 15px; font-weight: 700; pointer-events: none; }
+.roda-svg .t-grp { fill: #fff; font-size: 13.5px; font-weight: 500; pointer-events: none; }
+.roda-svg .centro { fill: var(--azul); }
+.roda-svg .t-c1 { fill: #fff; font-size: 44px; font-weight: 700; }
+.roda-svg .t-c2 { fill: #fff; font-size: 15px; font-weight: 500; }
+.roda-svg .t-c3 { fill: #a9d8ef; font-size: 13px; }
+.roda-painel { --c: var(--azul); background: var(--fundo-claro); padding: 28px 32px; }
+.roda-painel span { display: block; font: 700 13px/1 var(--font); letter-spacing: .1em; text-transform: uppercase; color: var(--cinza); margin-bottom: 8px; }
+.p-grupo { display: flex; gap: 12px; align-items: center; font-size: 16px; color: var(--c); font-weight: 500; }
+.p-grupo b { width: 30px; height: 30px; border-radius: 50%; background: var(--c); color: #fff; display: grid; place-items: center; font-size: 15px; flex: none; }
+.roda-painel h3 { margin: 16px 0 14px; font: 700 27px/1.25 var(--font); color: var(--azul); display: flex; gap: 14px; align-items: baseline; }
+.roda-painel h3 .p-n { font-size: 27px; }
+.p-n { color: var(--c); }
+.p-tipo { font-size: 19px; margin-bottom: 14px; }
+.p-desc { font-size: 20px; line-height: 1.5; margin: 0 0 16px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chips i { font-style: normal; font-size: 14px; padding: 5px 9px; border: 1px solid var(--linha); color: #9aa6b4; background: #fff; }
+.chips i.on { background: var(--c); border-color: var(--c); color: #fff; font-weight: 500; }
+.p-esc { margin-bottom: 18px; }
+.p-perg { background: #fff; padding: 16px 20px; font: italic 400 20px/1.45 var(--font); }
+.roda-dica { font-size: 14px; color: var(--cinza); margin-top: 10px; }
+
+/* escalas do exercício */
+.aninhado { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; }
+.caixas { position: relative; height: 620px; }
+.caixas div { position: absolute; border: 2px solid var(--c, var(--azul)); padding: 8px 12px; font-size: 18px; font-weight: 500; color: var(--c, var(--azul)); background: color-mix(in srgb, var(--c, var(--azul)) 4%, transparent); }
+.regioes { list-style: none; padding: 0; margin: 0; }
+.regioes li { padding: 14px 0 14px 20px; border-left: 4px solid var(--ciano); margin-bottom: 12px; background: var(--fundo-claro); font-size: 22px; }
+
+/* materiais */
+.folhas { display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px; }
+.a3 { aspect-ratio: 420 / 297; border: 2px solid var(--azul); position: relative; padding: 16px; background: #fff; display: flex; flex-direction: column; justify-content: space-between; }
+.a3::after { content: ""; position: absolute; right: 8px; bottom: 8px; width: 34%; height: 22%; border: 1.5px solid var(--azul); }
+.a3 b { font-size: 21px; line-height: 1.25; }
+.a3 small { font-size: 15px; color: var(--cinza); max-width: 60%; }
+.a3 .n { position: absolute; top: 10px; right: 14px; font: 700 26px var(--font); color: var(--ciano); }
+.levar { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; margin-top: 34px; }
+.levar div { background: var(--fundo-claro); padding: 22px 26px; font-size: 21px; line-height: 1.45; }
+.levar div b { display: block; color: var(--azul-2); margin-bottom: 4px; }
+
+/* SbN */
+.sbn { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 26px; }
+.sbn .card p { font-size: 22px; }
+
+/* referências */
+.refs { font-size: 19px; line-height: 1.5; columns: 2; column-gap: 56px; }
+.refs p { margin: 0 0 14px; break-inside: avoid; }
+
+/* navegação */
+.progress { position: fixed; left: 0; bottom: 0; height: 4px; width: 100%; background: rgba(255,255,255,.08); z-index: 5; }
+.progress span { display: block; height: 100%; width: 0; background: var(--ciano); transition: width .3s; }
+.ctrl { position: fixed; right: 16px; bottom: 14px; display: flex; gap: 6px; align-items: center; z-index: 6; font: 500 13px var(--font); color: #8ea3bb; }
+.ctrl button { background: rgba(0,53,122,.08); color: var(--azul); border: 0; width: 34px; height: 30px; border-radius: 4px; cursor: pointer; font-size: 16px; }
+.ctrl button:hover { background: rgba(0,53,122,.18); }
+.slide-num { min-width: 54px; text-align: center; font-variant-numeric: tabular-nums; }
+
+@media print {
+  @page { size: 1600px 900px; margin: 0; }
+  html, body { overflow: visible; height: auto; background: #fff; }
+  .stage { position: static; transform: none !important; width: 1600px; height: auto; }
+  .slide { position: relative; opacity: 1; visibility: visible; width: 1600px; height: 900px; break-after: page; }
+  .progress, .ctrl { display: none; }
+}
+
+/* ---- v03 ---- */
+.c-7-5 { grid-template-columns: 7fr 5fr; align-items: start; }
+.boas .tfg { font-size: 23px; line-height: 1.5; background: var(--fundo-claro); padding: 20px 24px; margin-top: 34px; }
+.pilha { display: grid; gap: 24px; }
+
+/* slide 5: construção do autor */
+.s-rel { position: absolute; }
+.rel-linhas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; font-family: var(--font); }
+.rel-texto { position: absolute; left: 850px; top: 250px; width: 690px; }
+.rel-a { font: 400 36px/1.35 var(--font); margin: 0 0 70px; }
+.rel-b { font: 400 36px/1.55 var(--font); margin: 0; }
+.rel-b mark { background: var(--azul); color: #fff; padding: 0 8px; }
+.rel-b .caixa { display: inline-block; border: 2px solid var(--azul); padding: 4px 12px; margin-top: 8px; }
+
+/* slide 6 */
+.s-conf .bd { display: flex; flex-direction: column; justify-content: center; padding-top: 30px; }
+.s-conf .confrontos { gap: 48px; }
+.s-conf .conf svg { height: 270px; margin-bottom: 26px; }
+.s-conf .conf h4 { font-size: 28px; }
+.sintese { margin-top: 70px; padding: 0; background: none; color: var(--azul); font: 700 34px/1.3 var(--font); }
+
+/* slide 8 */
+.niveis { gap: 6px; align-content: start; }
+.nivel { padding: 14px 0; }
+
+/* pranchas */
+.pranchas { display: grid; grid-template-columns: 1fr 1fr; gap: 36px; height: 100%; }
+.pranchas { align-items: center; }
+.pranchas figure { margin: 0; }
+.pranchas img { width: 100%; height: auto; max-height: 590px; object-fit: contain; display: block; }
+.pranchas figcaption { font-size: 16px; color: var(--cinza); margin-top: 10px; }
+
+/* mapa */
+.s-mapa .bd { padding-top: 20px; }
+.mapa-layout { display: grid; grid-template-columns: 1000px 1fr; gap: 30px; height: 100%; }
+.mapa-box { width: 1000px; height: 722px; }
+.mapa-svg { width: 100%; height: 100%; font-family: var(--font); }
+.mapa-svg .oceano { fill: #eaf2f8; }
+.mapa-svg .uf { fill: #f5f5f5; stroke: #fff; stroke-width: 1.5; }
+.mapa-svg .t-uf { fill: #8a8a8a; font-size: 15px; font-weight: 700; letter-spacing: .18em; }
+.mapa-svg .t-oceano { fill: #8fb3d9; font-size: 15px; font-style: italic; letter-spacing: .25em; }
+.mapa-svg .mun { stroke: #fff; stroke-width: .8; cursor: pointer; transition: fill .15s; }
+.mapa-svg .mun:hover { filter: brightness(.9); }
+.mapa-svg .mun.sel { stroke: #ff8a00; stroke-width: 3; }
+.mapa-svg .mun:focus { outline: none; stroke: #ff8a00; stroke-width: 2; }
+.mapa-svg .vazado .mun { stroke: rgba(255,255,255,.55); }
+.mapa-svg .reg { stroke: none; }
+.mapa-svg .reg-linha { fill: none; stroke: #fff; stroke-width: 2.6; pointer-events: none; }
+.mapa-svg .reg-linha.on { stroke: #ff8a00; stroke-width: 4; }
+.mapa-svg .t-reg { font-size: 13px; font-weight: 700; pointer-events: none; paint-order: stroke; }
+.mapa-svg .t-dica { font-size: 15px; font-weight: 700; fill: #003366; paint-order: stroke; stroke: #fff; stroke-width: 4px; pointer-events: none; }
+.camadas { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+.camadas button { font: 500 14px var(--font); padding: 7px 11px; border: 1.5px solid #1e662e; background: #fff; color: #1e662e; cursor: pointer; }
+.camadas button.on { background: #1e662e; color: #fff; }
+.legenda { list-style: none; margin: 0; padding: 0; columns: 2; column-gap: 14px; font-size: 14px; }
+.legenda li { display: flex; gap: 8px; align-items: center; padding: 3px 0; cursor: pointer; break-inside: avoid; line-height: 1.25; }
+.legenda li i { width: 16px; height: 16px; flex: none; border: 1px solid #d5dce6; }
+.legenda li.on { font-weight: 700; color: #ff8a00; }
+.legenda li.sem { color: var(--cinza); cursor: default; }
+.fonte-camada { font-size: 12px; color: var(--cinza); margin: 8px 0 14px; }
+.mapa-painel { background: var(--fundo-claro); padding: 20px 22px; font-size: 16px; }
+.mapa-painel span { display: block; font: 700 12px/1 var(--font); letter-spacing: .1em; text-transform: uppercase; color: #1e662e; margin-bottom: 6px; }
+.mapa-painel h3 { margin: 0 0 10px; font-size: 24px; color: var(--azul); }
+.mapa-painel dl { margin: 0; display: grid; grid-template-columns: 1fr; gap: 2px; }
+.mapa-painel dt { font-size: 12px; color: var(--cinza); text-transform: uppercase; letter-spacing: .06em; margin-top: 8px; }
+.mapa-painel dd { margin: 0; font-size: 16px; line-height: 1.35; }
+.mapa-painel .lista-mun { font-size: 15px; line-height: 1.5; margin: 0; }
+.mapa-painel .qtd { color: var(--cinza); margin: 0 0 8px; }
+.mapa-painel .vazio { color: var(--cinza); margin: 0; }
+
+/* ---- v04 ---- */
+.p-lei { font-size: 14.5px; line-height: 1.45; max-height: 118px; overflow: auto; background: #fff; padding: 10px 14px; margin-bottom: 12px; border: 1px solid var(--linha); }
+.roda-painel .p-desc { font-size: 18px; margin-bottom: 12px; }
+.roda-painel h3 { font-size: 24px; margin: 12px 0 10px; }
+.roda-painel h3 .p-n { font-size: 24px; }
+.p-tipo { font-size: 17px; margin-bottom: 10px; }
+.p-esc { margin-bottom: 12px; }
+.p-perg { font-size: 18px; padding: 12px 16px; }
+.zee-barra { display: flex; height: 18px; width: 100%; margin: 6px 0 6px; }
+.zee-barra i { display: block; height: 100%; }
+.zee-leg { list-style: none; margin: 0; padding: 0; font-size: 13px; }
+.zee-leg li { display: flex; gap: 6px; align-items: center; }
+.zee-leg li i { width: 12px; height: 12px; flex: none; }
+.zee-leg b { margin-left: auto; }
+.zee-nota { font-size: 13px; color: var(--cinza); margin: 0 0 8px; }
+.s-centro .bd { display: flex; align-items: center; padding-bottom: 60px; }
+.s-centro .bd > .cols { height: auto; width: 100%; }
+.prog .prox { grid-column: 3; max-width: none; margin: 18px 0 0; }
+.s-conf .conf h4 { line-height: 1.3; }
+
+</style>
 <style>
   html, body { overflow: auto; background: #fff; height: auto; }
   .faixa { background: linear-gradient(90deg, var(--azul-2), var(--marinho)); color: #fff; padding: 26px 0; }
@@ -45,7 +353,303 @@
     <br><a href="index.html#14">← voltar à apresentação</a>
   </footer>
 </div>
-<script src="assets/js/roda.js"></script>
+<script>
+/* =========================================================================
+   Roda dos 35 instrumentos da Avaliação de Risco de Desastres e Vulnerabilidade
+   (ONU-Habitat / Governo do Estado do Rio de Janeiro — Volume 4, Nota Metodológica, Quadro 4 e fichas)
+   Seminário Avançado Cidade & Mudanças Climáticas — PROURB/FAU/UFRJ, 2026
+
+   Para editar: altere apenas GRUPOS, ESCALAS e INSTRUMENTOS abaixo.
+   Campos de cada instrumento:
+     n       número na Tabela 2 da Nota Metodológica
+     g       letra do grupo
+     curto   rótulo na roda (até ~22 caracteres)
+     nome    nome completo
+     tipo    tipo de instrumento (leitura de Halpern, Lascoumes e Le Galès)
+     desc    descrição breve
+     esc     escalas da rua em que o instrumento incide (ver ESCALAS)
+     lei     legislação aplicável (campo "Normatização" das fichas da Nota Metodológica, p. 57–117)
+     perg    pergunta para a rua
+   ========================================================================= */
+
+const GRUPOS = {
+  A: { nome: "Ordenamento territorial, desenvolvimento urbano e geologia", curto: ["Ordenamento", "territorial"], cor: "#1E3768" },
+  B: { nome: "Defesa civil e gestão de riscos e desastres", curto: ["Defesa", "civil"], cor: "#D2691E" },
+  C: { nome: "Educação, saúde e mobilização social", curto: ["Educação"], cor: "#8E5BA6" },
+  D: { nome: "Mudanças do clima, meio ambiente e gestão de recursos hídricos", curto: ["Clima e", "ambiente"], cor: "#2E8B57" },
+  E: { nome: "Infraestrutura e saneamento básico", curto: ["Saneamento"], cor: "#09ADD7" },
+  F: { nome: "Ciência e tecnologia, dados e transparência", curto: ["Dados"], cor: "#5B6B85" }
+};
+
+const ESCALAS = ["Rua", "Quadra", "Bairro", "AP / RP", "Zona", "Macrozona", "Município",
+  "Região de Governo", "Regional de Defesa Civil", "Região Hidrográfica", "Arranjo de resíduos sólidos", "ZEE-RJ"];
+
+const INSTRUMENTOS = [
+  { n: 1, g: "A", curto: "Perímetro urbano", nome: "Perímetro urbano", tipo: "Regulamentação",
+    desc: "Instrumento de delimitação de área prevista pelo Estatuto da Cidade.",
+    lei: "Art. 42-B, Lei Federal nº 10.257, de 10 de julho de 2001",
+    esc: ["Município", "Macrozona"], perg: "Desde quando a área da rua está dentro do perímetro urbano? A expansão do perímetro alcançou áreas suscetíveis?" },
+  { n: 2, g: "A", curto: "Plano Diretor", nome: "Plano diretor", tipo: "Planejamento e regulamentação",
+    desc: "Instrumento básico da política de desenvolvimento urbano que orienta a ocupação e o uso do solo no território municipal, definindo diretrizes para o ordenamento territorial, infraestrutura urbana, habitação, mobilidade, meio ambiente, patrimônio cultural e gestão democrática da cidade.",
+    lei: "Capítulo III, Lei Federal nº 10.257, de 10 de julho de 2001 (Estatuto da Cidade)",
+    esc: ["Município", "Macrozona", "Zona", "AP / RP", "Bairro"], perg: "Em que macrozona e zona a rua está? O que o plano prevê para essa porção da cidade?" },
+  { n: 3, g: "A", curto: "ZEIS / AEIS", nome: "Zona especial de interesse social (ZEIS) e/ou área de especial interesse social (AEIS)", tipo: "Regulamentação",
+    desc: "Instrumento urbanístico utilizado para reconhecer e regularizar áreas ocupadas predominantemente por população de baixa renda, garantindo o direito à moradia digna, à infraestrutura urbana e à regularização fundiária.",
+    lei: "Art. 4º, inc. V, alínea “f”, Lei Federal nº 10.257, de 10 de julho de 2001 (Estatuto da Cidade)",
+    esc: ["Zona", "Bairro", "Quadra"], perg: "Há ZEIS ou AEIS no bairro ou na quadra? Elas se sobrepõem a áreas suscetíveis?" },
+  { n: 4, g: "A", curto: "ZEE municipal", nome: "Zoneamento ecológico-econômico municipal (ZEE)", tipo: "Regulamentação e cartografia",
+    desc: "Instrumento de planejamento territorial que organiza o uso do solo com base na compatibilização entre as potencialidades e limitações ambientais e as necessidades socioeconômicas do território.",
+    lei: "Decreto nº 4.297, de 10 de julho de 2002, que regulamenta o ZEE no território nacional Art. 9º, inciso II, da Lei nº 6.938, de 31 de agosto de 1981 (Política Nacional do Meio Ambiente)",
+    esc: ["Município", "ZEE-RJ"], perg: "Em que zona do ZEE a rua se insere? Como ela dialoga com o ZEE do estado?" },
+  { n: 5, g: "A", curto: "Zoneamento ambiental", nome: "Zoneamento ambiental municipal (se diferente do ZEE)", tipo: "Regulamentação",
+    desc: "Instrumento de planejamento territorial que visa a compatibilização do desenvolvimento urbano com a proteção ambiental, identificando áreas prioritárias para conservação, recuperação e uso sustentável dos recursos naturais.",
+    lei: "Art. 4º, inciso III, alínea “c”, da Lei Federal nº 10.257, de 10 de julho de 2001 (Estatuto da Cidade)",
+    esc: ["Município", "Zona"], perg: "Há restrição ambiental incidindo sobre o bairro ou a quadra da rua?" },
+  { n: 6, g: "A", curto: "Zon. áreas suscetíveis", nome: "Zoneamento específico sobre áreas suscetíveis a risco de desastres", tipo: "Regulamentação",
+    desc: "Instrumento de planejamento, regulação urbana e gestão de uso solo que delimina áreas inundáveis ou suscetíveis a deslizamentos para subsidiar a tomada de decisão.",
+    lei: "Art. 2º, inc. VI, alínea “h”, Lei Federal nº 10.257, de 10 de julho de 2001; Lei Federal nº 12.608/2012",
+    esc: ["Zona", "Bairro", "Quadra"], perg: "A legislação reconhece a suscetibilidade da área da rua? Com que efeito sobre a ocupação?" },
+  { n: 7, g: "A", curto: "CGAU 1:10.000", nome: "Carta geotécnica de aptidão à urbanização (CGAU), com escala 1:10.000", tipo: "Cartografia",
+    desc: "Instrumento de planejamento urbano, que fornece subsídios técnicos ao ordenamento territorial com foco na prevenção de desastres.",
+    lei: "Art. 22º, §2º, inc. V, Lei Federal nº 12.608, de 10 de abril de 2012",
+    esc: ["Município", "Bairro"], perg: "O que a carta diz da área da rua em 1:10.000? O que essa escala não permite ver?" },
+  { n: 8, g: "A", curto: "Suscetibilidade 1:25 mil", nome: "Carta de suscetibilidade (CS) a deslizamentos e inundações, com escala inferior ou igual a 1:25.000", tipo: "Cartografia",
+    desc: "Instrumento técnico que mapeia e identifica áreas suscetíveis a movimentos de massa, inundações e enxurradas.",
+    lei: "Lei Federal nº 12.608, de 10 de abril de 2012",
+    esc: ["Município", "Região Hidrográfica"], perg: "A rua está em área de suscetibilidade alta, média ou baixa? A carta fala da rua ou do seu contexto?" },
+  { n: 9, g: "A", curto: "Carta de risco 1:2.000", nome: "Setorização de risco ou carta de risco (CR), com escala superior ou igual a 1:2.000", tipo: "Cartografia",
+    desc: "Instrumento de planejamento urbano que avalia a ocupação territorial e o potencial de ocorrência de processos que possam gerar impactos para pessoas, bens e infraestruturas.",
+    lei: "Lei Federal nº 12.608, de 10 de abril de 2012",
+    esc: ["Bairro", "Quadra", "Rua"], perg: "Há setores de risco na quadra ou na rua? Quantas moradias e pessoas estão expostas?" },
+  { n: 10, g: "A", curto: "Setorização SGB", nome: "Setorização de riscos do Serviço Geológico do Brasil", tipo: "Cartografia",
+    desc: "Instrumento técnico-metodológico elaborado pelo Serviço Geológico do Brasil (SGB) que identifica, classifica e delimita áreas com riscos geológicos e hidrológicos em áreas urbanas, especialmente sujeitos a movimentos de massa e inundações.",
+    lei: "Lei Federal nº 12.608, de 10 de abril de 2012",
+    esc: ["Bairro", "Quadra", "Rua"], perg: "A setorização do SGB coincide com a carta de risco municipal na área da rua?" },
+
+  { n: 11, g: "B", curto: "PMRR", nome: "Plano municipal de redução de riscos (PMRR)", tipo: "Planejamento",
+    desc: "Instrumento de planejamento que apresenta informações técnicas dos setores de risco e da priorização das áreas para investimentos públicos e privados com intervenções estruturais e não estruturais para redução de riscos.",
+    lei: "Art. 33, inc. I, Decreto Federal nº 11.468, de 5 de abril de 2023",
+    esc: ["Município", "Bairro"], perg: "O PMRR prevê intervenção no bairro da rua? Ela foi executada?" },
+  { n: 12, g: "B", curto: "Plano de contingência", nome: "Plano de contingência / Plano preventivo de defesa civil / Plano de chuvas fortes / Plano verão", tipo: "Planejamento",
+    desc: "Plano operacional de responsabilidade do município voltado para a preparação de desastres mediante a definição de um cenário de risco local.",
+    lei: "Art. 1º, inc. VII, Lei Federal nº 12.608, de 10 de abril de 2012 (Política Nacional de Proteção e Defesa Civil - PNPDEC); Lei Federal nº 14.750, de 12 de dezembro 2023",
+    esc: ["Município", "Bairro", "Regional de Defesa Civil"], perg: "O plano prevê cenários, pontos de apoio ou rotas para o bairro da rua?" },
+  { n: 13, g: "B", curto: "Alerta e alarme", nome: "Sistema de alerta e alarme", tipo: "Informação e comunicação",
+    desc: "Mecanismo de comunicação emergencial e de mobilização da população, proporcionando um aviso prévio vital, permitindo ações preventivas e evacuações seguras em face da ameaça constante do risco de desastres naturais.",
+    lei: "Lei Federal nº 14.750, de 12 de dezembro de 2023; Lei Federal nº 12.608, de 10 de abril de 2012 (Política Nacional de Proteção e Defesa Civil - PNPDEC)",
+    esc: ["Município", "Bairro", "Rua"], perg: "Como um alerta chegaria a quem está na rua? Há sirene ou ponto de apoio por perto?" },
+  { n: 14, g: "B", curto: "Centro de operações", nome: "Centro de operações", tipo: "Monitoramento",
+    desc: "Estrutura organizacional e tecnológica que centraliza informações, coordena ações e integra diferentes atores para a gestão de emergências, crises e desastres.",
+    lei: "ABNT PR1021 DE 05/2024 Centro de operações de cidade — Implementação; Lei Federal nº 12.608, de 10 de abril de 2012 (Política Nacional de Proteção e Defesa Civil - PNPDEC)",
+    esc: ["Município", "Regional de Defesa Civil"], perg: "Que dados o centro monitora para a área da rua (pluviômetro, câmeras, ocorrências)?" },
+  { n: 15, g: "B", curto: "Vistorias da DC", nome: "Vistorias da defesa civil", tipo: "Fiscalização",
+    desc: "Ação técnica de inspeção realizada para avaliar condições de risco em edificações, infraestruturas e áreas suscetíveis a desastres, com o objetivo de prevenir ou mitigar impactos sobre a população e o meio ambiente.",
+    lei: "Art. 8º, inc. VII, Lei Federal nº 12.608, de 10 de abril de 2012 (Política Nacional de Proteção e Defesa Civil - PNPDEC)",
+    esc: ["Rua", "Quadra"], perg: "Há registro de vistorias em imóveis da rua? O que motivou?" },
+  { n: 16, g: "B", curto: "Fundo de defesa civil", nome: "Fundo municipal de defesa civil", tipo: "Fiscal e financeiro",
+    desc: "Instrumento financeiro essencial previsto na Política Nacional de Proteção e Defesa Civil (PNPDEC), estabelecida pela Lei nº 12.608/2012.",
+    lei: "Art. 20º, Lei Federal nº 12.608, de 10 de abril de 2012",
+    esc: ["Município"], perg: "O fundo existe e tem recursos? Poderia financiar uma intervenção na rua?" },
+  { n: 17, g: "B", curto: "NUPDEC", nome: "Núcleo comunitário de proteção e defesa civil (NUPDEC)", tipo: "Participação",
+    desc: "Núcleo comunitário apoiado pela defesa civil envolvendo moradores voluntários de áreas de risco para a promoção contínua da cultura de prevenção e minimização dos riscos e desastres nas áreas de maior vulnerabilidade nos municípios.",
+    lei: "Lei Federal nº 12.608, de 10 de abril de 2012 (Política Nacional de Proteção e Defesa Civil - PNPDEC)",
+    esc: ["Bairro", "Rua"], perg: "Há NUPDEC no bairro? Como os moradores da rua se organizam diante do risco?" },
+
+  { n: 18, g: "C", curto: "Educação ambiental", nome: "Programa municipal de educação ambiental", tipo: "Educação",
+    desc: "Instrumento de gestão que contempla as diretrizes e ações para a integração das múltiplas dimensões da sustentabilidade no processo educacional em espaços de educação formal e não formal visando a conservação e a proteção ambiental com participação social.",
+    lei: "Lei Federal nº 9.795, de 27 de abril de 1999; Decreto nº 4.281, de 25 de junho de 2002; Lei Estadual (Rio de Janeiro) nº 3.325, de 17 de dezembro de 1999: Institui a Política Estadual de Educação Ambiental; Lei Estadual (Rio de Janeiro) nº 7.973, de 23 de maio de 2018; Lei Estadual (Rio de Janeiro) nº 9.949, de 2023",
+    esc: ["Município", "Bairro"], perg: "Que escolas ou equipamentos do bairro participam de ações de educação ambiental?" },
+  { n: 19, g: "C", curto: "ERRD", nome: "Educação para redução de riscos de desastres (ERRD) / Educação em defesa civil", tipo: "Educação",
+    desc: "Processo contínuo, interdisciplinar e participativo que visa desenvolver a percepção de riscos e vulnerabilidades a desastres socioambientais, capacitando indivíduos e comunidades a compreenderem as causas e os efeitos dos riscos aos quais estão expostos, a fim de prepará-los para atuar ativamente na prevenção de desastres e de forma segura nas fases de resposta e reconstrução, promovendo assim uma cultura de prevenção de desastres para tornar cidades e comunidades mais resilientes.",
+    lei: "Art. 3 e Art. 29 da Lei Federal nº 12.608, de 10 de abril de 2012 (Política Nacional de Proteção e Defesa Civil - PNPDEC); Lei Estadual nº 9.949, de 02 de janeiro de 2023 (Rio de Janeiro); Lei Federal n. 14.926/2024 (Altera a PNEA para assegurar atenção às mudanças do clima, à proteção da biodiversidade e aos riscos e vulnerabilidades a desastres socioambientais no âmbito da PNEA); Lei Federal nº 9.795, de 27 de abril de 1999 (Institui a PNEA); Decreto nº 4.281, de 25 de junho de 2002; Lei Estadual nº 3.325, de 17 de dezembro de 1999 (Institui a Política Estadual de Educação Ambiental no Estado do Rio de Janeiro); Lei Estadual nº 7.973, de 23 de maio de 2018 (Altera a Politica Estadual de Educação Ambiental); Lei Estadual nº 9.949, de 2023 (Inclui a Educação Climática no Programa Estadual de Educação Ambiental).",
+    esc: ["Bairro", "Rua"], perg: "A escola mais próxima da rua trabalha o tema do risco? Como?" },
+  { n: 20, g: "C", curto: "Saúde e desastres", nome: "Saúde e desastres", tipo: "Planejamento setorial",
+    desc: "Instrumento de gestão que integra as políticas municipais de saúde com as de proteção e defesa civil, através da definição de ações de atendimento médico-hospitalar e psicológico nos Planos de Contingência.",
+    lei: "Lei Federal nº 12.608, de 10 de abril de 2012 (Política Nacional de Proteção e Defesa Civil - PNPDEC); Lei nº 14.750, de dezembro de 2023",
+    esc: ["Município", "Bairro"], perg: "Onde fica a unidade de saúde de referência da rua? Ela está em área suscetível?" },
+
+  { n: 21, g: "D", curto: "Conselho meio ambiente", nome: "Conselho municipal de meio ambiente", tipo: "Participação (colegiado)",
+    desc: "Instância colegiada e deliberativa no âmbito municipal, composta por representantes do poder público e da sociedade civil, com a finalidade de formular, fiscalizar e acompanhar as políticas ambientais locais.",
+    lei: "Art. 20 da Resolução CONAMA nº 237 de 19 de dezembro de 1997; Lei nº 6.938, de 31 de agosto de 1981 (Política Nacional do Meio Ambiente).",
+    esc: ["Município"], perg: "O conselho já tratou de algum tema que afete a rua ou o bairro?" },
+  { n: 22, g: "D", curto: "Conselho do clima", nome: "Conselho/comissão municipal de mudança do clima", tipo: "Participação (colegiado)",
+    desc: "Instância colegiada de caráter consultivo e/ou deliberativo voltada ao acompanhamento, formulação, monitoramento e avaliação de políticas públicas locais de enfrentamento à mudança do clima.",
+    lei: "Lei nº 12.187, de 29 de dezembro de 2009 (Política Nacional sobre Mudança do Clima)",
+    esc: ["Município"], perg: "Quem participa da comissão? A escala da rua aparece nas suas pautas?" },
+  { n: 23, g: "D", curto: "Fundo do clima", nome: "Fundo municipal de mudança do clima", tipo: "Fiscal e financeiro",
+    desc: "Mecanismo financeiro, fundamentado pela Política Nacional sobre Mudança do Clima (Lei nº 12.187/2009), essencial para viabilizar ações de mitigação e adaptação climática, garantindo recursos contínuos e estruturados para fortalecer a resiliência dos territórios frente aos impactos das mudanças climáticas.",
+    lei: "Lei nº 12.114, de 9 de dezembro de 2009 (Cria o Fundo Nacional sobre Mudança do Clima); Art. 6º, inc. II; Lei Federal nº 12.187, de 29 de dezembro 2009 (Institui a Política Nacional sobre Mudança do Clima - PNMC)",
+    esc: ["Município"], perg: "Uma intervenção de SbN na rua poderia ser financiada por esse fundo?" },
+  { n: 24, g: "D", curto: "Arborização urbana", nome: "Plano diretor de arborização urbana", tipo: "Planejamento",
+    desc: "Planeja plantio, manejo e conservação das árvores em ruas, praças e áreas verdes.",
+    lei: "Projeto de Lei Federal nº 4.309, de 2021; Plano Nacional de Recuperação da Vegetação Nativa (Planaveg); Lei Federal nº 12.651/2012 (Código Florestal); Lei Federal nº 9.985/2000 (Sistema Nacional de Unidades de Conservação - SNUC); Lei Federal nº 14.119/2021 (Política Nacional de Pagamento por Serviços Ambientais - PSA); Resolução CONAMA nº 369/2006 (Normas para recuperação de Áreas de Preservação Permanente - APPs)",
+    esc: ["Rua", "Bairro", "Município"], perg: "O que o plano prevê para a calçada da rua (espécies, canteiros, espaçamento)?" },
+  { n: 25, g: "D", curto: "PMMA (Mata Atlântica)", nome: "Plano municipal de conservação e recuperação da Mata Atlântica", tipo: "Planejamento",
+    desc: "Instrumento de planejamento ambiental aprovado pelo Conselho Municipal de Meio Ambiente que apresenta o diagnóstico da vegetação nativa contendo remanescentes de mata atlântica no(s) município(s) avaliado(s), indicando áreas e ações prioritárias para a conservação, recuperação e prevenção do desmatamento e da destruição da mata nativa.",
+    lei: "Lei Federal nº 11.428, de 22 de dezembro de 2006; Plano Nacional de Recuperação da Vegetação Nativa (Planaveg); Lei Federal nº 12.651/2012 (Código Florestal); Lei Federal nº 9.985/2000 (Sistema Nacional de Unidades de Conservação - SNUC); Lei Federal nº 14.119/2021 (Política Nacional de Pagamento por Serviços Ambientais - PSA); Resolução CONAMA nº 369/2006 (Normas para recuperação de Áreas de Preservação Permanente - APPs)",
+    esc: ["Município", "Região Hidrográfica"], perg: "Há remanescentes ou áreas prioritárias próximas? A rua pode funcionar como conexão verde?" },
+  { n: 26, g: "D", curto: "Plano clima municipal", nome: "Plano municipal de adaptação, mitigação e resiliência a mudanças climáticas", tipo: "Planejamento",
+    desc: "Instrumento de planejamento que estabelece medidas para incluir a gestão do risco da mudança do clima nos planos e nas políticas públicas setoriais e temáticas existentes e nas estratégias de desenvolvimento municipal.",
+    lei: "Lei Federal nº 14.904, de 27 de junho de 2024 (Estabelece diretrizes para a elaboração de planos de adaptação à mudança do clima); Art. 5º, inc. V, Lei Federal nº 12.187, de 29 de dezembro de 2009 (Institui a Política Nacional sobre Mudança do Clima - PNMC)",
+    esc: ["Município", "AP / RP"], perg: "Que ameaças climáticas o plano aponta para a região da rua (calor, chuvas, elevação do mar)?" },
+  { n: 27, g: "D", curto: "Recursos hídricos", nome: "Plano de recursos hídricos", tipo: "Planejamento",
+    desc: "Instrumento de planejamento da gestão de recursos hídricos elaborado por bacia hidrográfica, que apresenta o diagnóstico da bacia, a análise de alternativas, o levantamento do uso da água e propostas para a criação de áreas sujeitas a restrição de uso, com o objetivo de proteger os recursos hídricos.",
+    lei: "Lei nº 3.239 de 2 de agosto de 1999 (Política Estadual de Recursos Hídricos); Resolução CNRH nº 156 de 9 de junho de 2014 (Diretrizes para [...] aumento da resiliência frente a desastres inerentes às questões hídricas); Lei nº 12.608 de 10 de abril de 2012 (Política Nacional de Proteção e Defesa Civil). Lei nº 9.433 de 8 de janeiro de 1997 (Política Nacional de Recursos Hídricos)",
+    esc: ["Região Hidrográfica", "ZEE-RJ"], perg: "Em que Região Hidrográfica e sub-bacia a rua está? Para que corpo hídrico escoa?" },
+
+  { n: 28, g: "E", curto: "PAC", nome: "PAC (projetos de infraestrutura relativos a risco de desastres)", tipo: "Obra e financiamento",
+    desc: "Programa do Governo Federal com o objetivo de promover o desenvolvimento econômico e social do Brasil por meio de investimentos estratégicos em infraestrutura, habitação, mobilidade e sustentabilidade.",
+    lei: "Portaria Conjunta MGI/MF/CGU nº 32, de 4 de junho de 2024 (Regulamenta as transferências obrigatórias a estados, Distrito Federal, municípios e consórcios públicos, para a execução de ações do Programa de Aceleração do Crescimento - Novo PAC); Lei nº 15.112 de 17 de março de 2025 (Altera a Lei nº 11.445, de 5 de janeiro de 2007 - Lei de Saneamento Básico - para prever a possibilidade de emprego de recursos públicos em serviços de drenagem e manejo de águas urbanas em condições emergenciais); Lei nº 11.578, de 26 de novembro de 2007 (Dispõe sobre a transferência obrigatória de recursos financeiros para a execução pelos Estados, Distrito Federal e Municípios de ações do Programa de Aceleração do Crescimento – PAC, e sobre a forma de operacionalização do Programa de Subsídio à Habitação de Interesse Social – PSH).",
+    esc: ["Bairro", "Rua"], perg: "Houve obra do PAC no bairro? O que mudou no entorno da rua?" },
+  { n: 29, g: "E", curto: "PMSB · drenagem", nome: "Plano municipal de saneamento básico – drenagem", tipo: "Planejamento setorial",
+    desc: "Componente do Plano Municipal de Saneamento Básico que contempla diagnóstico e plano de ação relativos ao manejo e drenagem das águas pluviais urbanas, serviço fundamental para a redução de riscos de desastres e a resiliência das cidades.",
+    lei: "Lei Federal nº 11.445/2007; Lei Federal nº 14.026/2020; Decreto Federal nº 7.217/2010; Decreto Federal nº 10.203/2020. Norma de Referência ANA nº 12/2025",
+    esc: ["Rua", "Bairro", "Município", "Região Hidrográfica"], perg: "Para onde vai a água da chuva que cai na rua? A intervenção altera esse caminho?" },
+  { n: 30, g: "E", curto: "PMSB · água", nome: "Plano municipal de saneamento básico – abastecimento de água", tipo: "Planejamento setorial",
+    desc: "Componente do Plano Municipal de Saneamento Básico que contempla um diagnóstico e um plano de ação visando garantir a universalização do acesso à água potável e a gestão eficiente dos recursos hídricos no município.",
+    lei: "Lei Federal nº 11.445/2007; Lei Federal nº 14.026/2020; Decreto Federal nº 7.217/2010; Decreto Federal nº 10.203/2020",
+    esc: ["Bairro", "Município"], perg: "A rua é atendida por rede de água? Há intermitência no abastecimento?" },
+  { n: 31, g: "E", curto: "PMSB · esgoto", nome: "Plano municipal de saneamento básico – esgoto sanitário", tipo: "Planejamento setorial",
+    desc: "Instrumento da política municipal de saneamento básico que estabelece diretrizes, metas e ações para a universalização do serviço de esgotamento sanitário, assegurando a coleta, o tratamento e a destinação adequada dos efluentes.",
+    lei: "Lei Federal nº 11.445/2007; Lei Federal nº 14.026/2020; Decreto Federal nº 7.217/2010; Decreto Federal nº 10.203/2020; Resolução CONAMA nº 430/2011 (Padrões de lançamento de efluentes em corpos hídricos)",
+    esc: ["Rua", "Bairro", "Município"], perg: "A rua tem rede separadora? O esgoto chega à drenagem?" },
+  { n: 32, g: "E", curto: "PMSB · resíduos", nome: "Plano municipal de saneamento básico – resíduos sólidos", tipo: "Planejamento setorial",
+    desc: "Instrumento de planejamento obrigatório para todos os municípios brasileiros, conforme estabelecido pela Lei nº 11.445/2007 (Marco Legal do Saneamento Básico), alterada pela Lei nº 14.026/2020.",
+    lei: "Lei Federal nº 11.445/2007; Lei Federal nº 14.026/2020; Decreto Federal nº 7.217/2010; Decreto Federal nº 10.203/2020",
+    esc: ["Rua", "Município", "Arranjo de resíduos sólidos"], perg: "Como é a coleta na rua? Para onde vão os resíduos, no arranjo intermunicipal?" },
+
+  { n: 33, g: "F", curto: "Dados abertos", nome: "Portal de dados abertos", tipo: "Informação e transparência",
+    desc: "Mecanismo de transparência e governança pública, que disponibiliza informações técnicas, sociais, econômicas e ambientais produzidas ou custodiadas pelo poder público em formatos abertos e acessíveis.",
+    lei: "Lei Federal nº 12.527/2011 (Lei de Acesso à Informação); Decreto Federal nº 7.724/2012; Decreto Federal nº 8.777/2016; Instrução Normativa SLTI/MP nº 4, de 12 de abril de 2012 (Infraestrutura Nacional de Dados Abertos - INDA); Decreto Presidencial nº 6.666, de 27 de novembro de 2008 (Infraestrutura Nacional de Dados Espaciais - INDE)",
+    esc: ["Município"], perg: "Que dados sobre a rua e o bairro estão disponíveis abertamente?" },
+  { n: 34, g: "F", curto: "Banco de vistorias", nome: "Banco de dados de vistorias da defesa civil", tipo: "Informação",
+    desc: "Sistema estruturado para a coleta, armazenamento e análise de informações sobre ocorrências, vistorias e atendimentos a emergências.",
+    lei: "Lei Federal nº 12.608, de 10 de abril de 2012 (Política Nacional de Proteção e Defesa Civil - PNPDEC)",
+    esc: ["Rua", "Quadra", "Município"], perg: "É possível consultar o histórico de vistorias e ocorrências da rua?" },
+  { n: 35, g: "F", curto: "Cooperação e convênios", nome: "Cooperação técnica e convênios com instituições multilaterais e agências de fomento", tipo: "Cooperação e financiamento",
+    desc: "Mecanismos institucionais estabelecidos entre governos municipais, estaduais, nacional e organismos internacionais, agências de cooperação ou instituições de fomento com o objetivo de viabilizar assistência técnica, transferência de conhecimento, capacitação, acesso a financiamento e apoio à implementação de políticas públicas em diversas áreas, incluindo meio ambiente, desenvolvimento urbano, mudança do clima e gestão de riscos.",
+    lei: "Decreto nº 5.151/2004 (Dispõe sobre a cooperação técnica entre a administração pública e organismos internacionais no Brasil) Lei nº 13.019/2014 (Marco Regulatório das Organizações da Sociedade Civil)",
+    esc: ["Município", "Região de Governo"], perg: "Algum programa com financiamento externo alcança o bairro ou a rua?" }
+];
+
+/* ------------------------------------------------------------------------- */
+
+function montarRoda(container, painel, opts = {}) {
+  const NS = "http://www.w3.org/2000/svg";
+  const S = 820, C = S / 2;
+  const R = { c: 86, g0: 90, g1: 168, t0: 172, t1: 366, num: 384 };
+  const el = (tag, attrs = {}, parent) => {
+    const e = document.createElementNS(NS, tag);
+    for (const k in attrs) e.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(e);
+    return e;
+  };
+  const svg = el("svg", { viewBox: `0 0 ${S} ${S}`, class: "roda-svg", role: "img",
+    "aria-label": "Roda dos 35 instrumentos da Avaliação de Risco de Desastres" });
+  const defs = el("defs", {}, svg);
+  const N = INSTRUMENTOS.length, passo = (Math.PI * 2) / N, gap = 0.004;
+  const pol = (r, a) => [C + r * Math.sin(a), C - r * Math.cos(a)];
+  const deg = (a) => (a * 180) / Math.PI;
+  const arco = (r0, r1, a0, a1) => {
+    const [x0, y0] = pol(r1, a0), [x1, y1] = pol(r1, a1), [x2, y2] = pol(r0, a1), [x3, y3] = pol(r0, a0);
+    const L = a1 - a0 > Math.PI ? 1 : 0;
+    return `M${x0},${y0} A${r1},${r1} 0 ${L} 1 ${x1},${y1} L${x2},${y2} A${r0},${r0} 0 ${L} 0 ${x3},${y3}Z`;
+  };
+  let uid = 0;
+  const textoArco = (g, linhas, r, a0, a1, cls) => {
+    const meio = (a0 + a1) / 2, baixo = meio > Math.PI / 2 && meio < (3 * Math.PI) / 2;
+    linhas.forEach((txt, i) => {
+      const off = (i - (linhas.length - 1) / 2) * 16 * (baixo ? -1 : 1), rr = r - off, id = `ra${uid++}`;
+      const [sx, sy] = pol(rr, baixo ? a1 : a0), [ex, ey] = pol(rr, baixo ? a0 : a1);
+      el("path", { id, d: `M${sx},${sy} A${rr},${rr} 0 0 ${baixo ? 0 : 1} ${ex},${ey}` }, defs);
+      const t = el("text", { class: cls, "dominant-baseline": "middle" }, g);
+      const tp = el("textPath", { href: `#${id}`, startOffset: "50%", "text-anchor": "middle" }, t);
+      tp.textContent = txt;
+    });
+  };
+
+  // grupos (anel interno)
+  const letras = Object.keys(GRUPOS);
+  const gruposG = {};
+  letras.forEach((L) => {
+    const idx = INSTRUMENTOS.map((x, i) => (x.g === L ? i : -1)).filter((i) => i >= 0);
+    const a0 = idx[0] * passo, a1 = (idx[idx.length - 1] + 1) * passo;
+    const g = el("g", { class: "grp", "data-g": L }, svg);
+    const p = el("path", { d: arco(R.g0, R.g1, a0 + gap, a1 - gap), class: "seg-grp" }, g);
+    p.style.setProperty("--c", GRUPOS[L].cor);
+    textoArco(g, [L], R.g0 + 15, a0, a1, "t-letra");
+    textoArco(g, GRUPOS[L].curto, (R.g0 + R.g1) / 2 + 12, a0, a1, "t-grp");
+    gruposG[L] = g;
+  });
+
+  // instrumentos (anel externo, rótulos radiais)
+  const segs = [];
+  INSTRUMENTOS.forEach((it, i) => {
+    const a0 = i * passo, a1 = (i + 1) * passo, am = (a0 + a1) / 2, cor = GRUPOS[it.g].cor;
+    const g = el("g", { class: "tec", tabindex: "0", role: "button", "aria-label": `${it.n}. ${it.nome}` }, svg);
+    const p = el("path", { d: arco(R.t0, R.t1, a0 + gap, a1 - gap), class: "seg-tec" }, g);
+    p.style.setProperty("--c", cor);
+    const esquerda = am > Math.PI;
+    const rot = deg(am) - 90 + (esquerda ? 180 : 0);
+    const [lx, ly] = pol(esquerda ? R.t1 - 10 : R.t0 + 10, am);
+    const t = el("text", { x: lx, y: ly, class: "t-tec", "dominant-baseline": "central",
+      "text-anchor": "start", transform: `rotate(${rot} ${lx} ${ly})` }, g);
+    t.textContent = it.curto;
+    const [nx, ny] = pol(R.num, am);
+    el("circle", { cx: nx, cy: ny, r: 12, class: "num-bg" }, g).style.setProperty("--c", cor);
+    const tn = el("text", { x: nx, y: ny, class: "t-num", "text-anchor": "middle", "dominant-baseline": "central" }, g);
+    tn.textContent = it.n;
+    const item = { it, g };
+    segs.push(item);
+    g.addEventListener("click", (e) => { e.stopPropagation(); sel(item); });
+    g.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); e.stopPropagation(); sel(item); }
+      if (e.key === "ArrowDown" || e.key === "ArrowUp") { e.preventDefault(); e.stopPropagation();
+        const j = (segs.indexOf(item) + (e.key === "ArrowDown" ? 1 : N - 1)) % N; segs[j].g.focus(); sel(segs[j]); }
+    });
+  });
+
+  el("circle", { cx: C, cy: C, r: R.c, class: "centro" }, svg);
+  [["35", "t-c1", -16], ["instrumentos", "t-c2", 22], ["em 6 grupos", "t-c3", 44]].forEach(([s, c, dy]) => {
+    const t = el("text", { x: C, y: C + dy, class: c, "text-anchor": "middle", "dominant-baseline": "middle" }, svg);
+    t.textContent = s;
+  });
+
+  container.innerHTML = "";
+  container.appendChild(svg);
+
+  function sel(item) {
+    segs.forEach((s) => s.g.classList.toggle("on", s === item));
+    svg.classList.add("tem-sel");
+    letras.forEach((L) => gruposG[L].classList.toggle("on", L === item.it.g));
+    if (!painel) return;
+    const { it } = item, G = GRUPOS[it.g];
+    painel.style.setProperty("--c", G.cor);
+    painel.innerHTML = `
+      <div class="p-grupo"><b>${it.g}</b>${G.nome}</div>
+      <h3><b class="p-n">${it.n}</b>${it.nome}</h3>
+      <div class="p-tipo"><span>Tipo de instrumento</span>${it.tipo}</div>
+      <p class="p-desc">${it.desc}</p>
+      <div class="p-esc"><span>Relações escalares com a rua</span>
+        <div class="chips">${ESCALAS.map((e) => `<i class="${it.esc.includes(e) ? "on" : ""}">${e}</i>`).join("")}</div></div>
+      <div class="p-lei"><span>Legislação aplicável (Nota Metodológica)</span>${it.lei}</div>
+      <div class="p-perg"><span>Pergunta para a rua</span>${it.perg}</div>`;
+  }
+  if (opts.inicial !== false) sel(segs[opts.inicial || 1]);
+  return { sel: (i) => sel(segs[i]), segs };
+}
+
+function montarLista(container) {
+  const html = Object.keys(GRUPOS).map((L) => {
+    const G = GRUPOS[L];
+    const itens = INSTRUMENTOS.filter((x) => x.g === L)
+      .map((x) => `<li><b>${x.n}</b><div><strong>${x.nome}</strong><small>${x.tipo} · ${x.esc.join(", ")}</small></div></li>`).join("");
+    return `<section style="--c:${G.cor}"><h3><span>${L}</span>${G.nome}</h3><ol>${itens}</ol></section>`;
+  }).join("");
+  container.innerHTML = html;
+}
+
+</script>
 <script>montarRoda(document.getElementById("roda"), document.getElementById("roda-painel"), { inicial: 1 }); montarLista(document.getElementById("lista"));</script>
 </body>
 </html>
