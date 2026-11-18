@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Roda dos 35 instrumentos — Seminário Avançado Cidade & Mudanças Climáticas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+<style>
+  html, body { overflow: auto; background: #fff; height: auto; }
+  .faixa { background: linear-gradient(90deg, var(--azul-2), var(--marinho)); color: #fff; padding: 26px 0; }
+  .faixa .w, .pg { max-width: 1340px; margin: 0 auto; padding: 0 28px; }
+  .faixa small { color: #a9d8ef; letter-spacing: .08em; text-transform: uppercase; font-size: 13px; font-weight: 500; }
+  .faixa h1 { margin: 6px 0 0; font: 700 34px/1.15 var(--font); }
+  .pg { padding-top: 26px; padding-bottom: 60px; }
+  .intro { font-size: 18px; line-height: 1.55; max-width: 980px; margin: 0 0 20px; }
+  .pg .roda-layout { grid-template-columns: minmax(0, 640px) minmax(0, 1fr); gap: 36px; align-items: start; }
+  .pg .roda-box { width: 100%; height: auto; aspect-ratio: 1; margin: 0; }
+  .lista { columns: 2; column-gap: 40px; margin-top: 40px; }
+  .lista section { break-inside: avoid; margin-bottom: 26px; }
+  .lista h3 { display: flex; gap: 10px; align-items: center; font-size: 18px; margin: 0 0 8px; color: var(--c); }
+  .lista h3 span { width: 28px; height: 28px; border-radius: 50%; background: var(--c); color: #fff; display: grid; place-items: center; font-size: 14px; flex: none; }
+  .lista ol { list-style: none; margin: 0; padding: 0; }
+  .lista li { display: grid; grid-template-columns: 34px 1fr; padding: 7px 0; border-bottom: 1px solid var(--linha); font-size: 15px; line-height: 1.4; }
+  .lista li b { color: var(--c); }
+  .lista li small { display: block; color: var(--cinza); font-size: 13px; }
+  footer.fonte { margin-top: 26px; font-size: 13px; color: var(--cinza); line-height: 1.6; border-top: 1px solid var(--linha); padding-top: 14px; }
+  .pg a { color: var(--azul-2); }
+  @media (max-width: 900px) { .pg .roda-layout { grid-template-columns: 1fr; } .lista { columns: 1; } .faixa h1 { font-size: 26px; } }
+</style>
+</head>
+<body>
+<div class="faixa"><div class="w"><small>Seminário Avançado · Cidade &amp; Mudanças Climáticas · PROURB/FAU/UFRJ</small><h1>Roda dos 35 instrumentos da Avaliação do Risco de Desastres e Vulnerabilidades</h1></div></div>
+<div class="pg">
+  <p class="intro">Os 35 instrumentos de gestão analisados na Nota Metodológica do ONU-Habitat, organizados nos seis grupos do Quadro 4. Selecione um instrumento para ver o tipo de instrumento, a legislação aplicável, as relações escalares com a rua e uma pergunta para a análise.</p>
+  <div class="roda-layout">
+    <div class="roda-box" id="roda"></div>
+    <aside class="roda-painel" id="roda-painel"></aside>
+  </div>
+  <div class="lista" id="lista"></div>
+  <footer class="fonte">
+    Fonte: elaboração própria a partir da Quadro 4 e das fichas da Nota Metodológica — ONU-HABITAT. <i>Avaliação do risco de desastres e vulnerabilidades de 30 municípios do Rio de Janeiro</i>: volume 4 – nota metodológica. Rio de Janeiro: ONU-Habitat; Governo do Estado do Rio de Janeiro, 2025. p. 51–117. Leitura dos instrumentos a partir de HALPERN, C.; LASCOUMES, P.; LE GALÈS, P. (2021).
+    <br><a href="index.html#14">← voltar à apresentação</a>
+  </footer>
+</div>
+<script src="assets/js/roda.js"></script>
+<script>montarRoda(document.getElementById("roda"), document.getElementById("roda-painel"), { inicial: 1 }); montarLista(document.getElementById("lista"));</script>
+</body>
+</html>
